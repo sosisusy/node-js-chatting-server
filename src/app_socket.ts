@@ -1,6 +1,7 @@
 import app from "./app"
 import socketio from "socket.io"
 import middleware from "./middleware"
+import { IChattingMessage } from "./interfaces/Chatting"
 
 const users = {}
 
@@ -10,44 +11,24 @@ export default () => {
     // 토큰 체크 미들웨어
     // io.use(middleware.validSocketToken)
 
-    // io.on("connection", async (socket: socketio.Socket) => {
 
-    //     socket.join("test")
-    //     socket.join("test2")
-    //     socket.join("test3")
-    //     socket.join("test4")
+    io.on("connection", (socket: socketio.Socket) => {
+        const myRoom = "my" + socket.handshake.auth["id"]
 
-    //     console.log("worker: ", process.pid, "socket id:", socket.id)
+        socket.join(myRoom)
 
-    //     socket.emit("hello", socket.id)
-    //     socket.on("message", (data) => {
-    //         socket.emit("message", data)
-    //         socket.broadcast.emit("message", {
-    //             userName: socket.id,
-    //             contents: "이것은 브로드 캐스트란 것이여",
-    //         })
-    //     })
+        socket.emit("hello", `${socket.id} ${myRoom}`)
 
-    //     socket.on("disconnect", () => {
-    //         console.log("disconnect", process.pid)
-    //     })
-    // })
+        socket.on("message", (data: IChattingMessage) => {
+            io.to(myRoom).emit("message", data)
+        })
 
-
-
-    io.on("connection", async (socket: socketio.Socket) => {
-
-        socket.emit("hello", socket.id)
-        socket.on("message", (data) => {
-            socket.emit("message", data)
-            socket.broadcast.emit("message", {
-                userName: socket.id,
-                contents: "이것은 브로드 캐스트란 것이여",
-            })
+        socket.on("notice", (data: IChattingMessage) => {
+            io.emit("notice", data)
         })
 
         socket.on("disconnect", () => {
-            console.log("disconnect", process.pid)
+            console.log("disconnect", socket.id, myRoom)
         })
     })
 }
