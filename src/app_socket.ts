@@ -1,7 +1,7 @@
 import app from "./app"
 import socketio from "socket.io"
 import middleware from "./middleware"
-import { IChattingMessage } from "./interfaces/Chatting"
+import { IChattingMessage } from "./interfaces/chatting"
 
 const users = {}
 
