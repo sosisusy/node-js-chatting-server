@@ -3,7 +3,6 @@ import socketio from "socket.io"
 import middleware from "./middleware"
 import { IChattingMessage } from "./interfaces/chatting"
 
-const users = {}
 
 export default () => {
     const io = app.get("io") as socketio.Server
@@ -15,6 +14,8 @@ export default () => {
     io.on("connection", (socket: socketio.Socket) => {
         const myRoom = "my" + socket.handshake.auth["id"]
 
+        // console.log("현인원", rooms[myRoom].length)
+
         socket.join(myRoom)
 
         socket.emit("hello", `${socket.id} ${myRoom}`)
@@ -25,6 +26,10 @@ export default () => {
 
         socket.on("notice", (data: IChattingMessage) => {
             io.emit("notice", data)
+        })
+
+        socket.on("ping", (time: number) => {
+            socket.emit("ping", time)
         })
 
         socket.on("disconnect", () => {

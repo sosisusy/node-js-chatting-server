@@ -31,11 +31,14 @@ if (cluster.isMaster) {
     // 관제 서버 생성
     const server = http.createServer()
     sticky.listen(server, 80)
-
-    server.once("listening", () => {
-        console.log("tttt")
-    })
 } else {
+
+    // 워커 접속
+    process.on("message", (message, connection) => {
+        server.emit("connection", connection)
+        connection.resume();
+    })
+
     const server = app.listen(process.env.WORKER_PORT)
 
     // socket
@@ -48,12 +51,6 @@ if (cluster.isMaster) {
         pubClient,
         subClient,
     }))
-
-    // 워커 접속
-    process.on("message", (message, connection) => {
-        server.emit("connection", connection)
-        connection.resume();
-    })
 
 
 
