@@ -1,5 +1,6 @@
 
 import express from "express"
+import app from "../app"
 import utils from "../utils"
 
 export default () => {

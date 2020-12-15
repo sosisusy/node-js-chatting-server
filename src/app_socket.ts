@@ -5,11 +5,10 @@ import { IChattingMessage } from "./interfaces/chatting"
 
 
 export default () => {
-    const io = app.get("io") as socketio.Server
+    const io = app.locals["io"] as socketio.Server
 
     // 토큰 체크 미들웨어
     // io.use(middleware.validSocketToken)
-
 
     io.on("connection", (socket: socketio.Socket) => {
         const myRoom = "my" + socket.handshake.auth["id"]

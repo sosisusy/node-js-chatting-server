@@ -43,6 +43,7 @@ if (cluster.isMaster) {
 
     // socket
     const io = new socketio.Server(server, {
+        path: "/all",
         cors: {
             origin: "*"
         }
@@ -60,7 +61,7 @@ if (cluster.isMaster) {
      */
 
     // 소켓 io 글로벌 변수 등록
-    app.set("io", io)
+    app.locals["io"] = io
 
 
     // cors
@@ -79,4 +80,6 @@ if (cluster.isMaster) {
 
     // run socket
     app_socket()
+
+
 }
